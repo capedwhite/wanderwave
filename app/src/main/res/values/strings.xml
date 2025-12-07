@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">WanderWave</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_forgetpassword">ForgetpasswordActivity</string>
+</resources>
