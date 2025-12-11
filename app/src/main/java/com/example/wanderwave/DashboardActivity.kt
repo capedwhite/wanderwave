@@ -1,5 +1,6 @@
 package com.example.wanderwave
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,11 +16,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,47 +42,62 @@ class DashboardActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-Home()
+Dashboard()
         }
     }
 }
 
 @Composable
-fun Home() {
-Scaffold { padding->
-   Column(
-       modifier = Modifier.fillMaxSize().padding(padding).
-       background(color= Lightgreen)
-   ) {
-       Spacer(modifier = Modifier.height(20.dp))
-       Column(
-           modifier=Modifier.fillMaxWidth(),
-           horizontalAlignment = Alignment.Start
+fun Dashboard() {
+    data class NavItem(val label: String, val icon: Int)
 
-       ) {
-           Row(
-               modifier=Modifier.fillMaxWidth()
-           ) {
-               Image(
-                   painter = painterResource(id = R.drawable.justicon),
-                   contentDescription = null,
-                   modifier = Modifier.size(180.dp)
-               )
-               Spacer(modifier = Modifier.width(15.dp))
+    val context = LocalContext.current
+    val activity = context as Activity
+    var selectedIndex by remember { mutableStateOf(0) }
 
-               Text(
-                   "Wander Wave"
-               )
-           }
-       }
-    }
-} }
+    val navlist = listOf(
+        NavItem(label = "Explore", icon = R.drawable.baseline_time_to_leave_24),
+        NavItem(label = "request package", icon = R.drawable.outline_add_location_alt_24),
+        NavItem(label = "Challenges", icon = R.drawable.baseline_add_a_photo_24),
+        NavItem(label = "about", icon = R.drawable.outline_airplane_ticket_24)
+    )
+//    Scaffold(
+//         topBar = {
+//            TopAppBar(
+//                title = {
+//                    Image(
+//                        painter = painterResource(R.drawable.wandericon),
+//                        contentDescription = null,
+//                    )
+//                },
+//                colors = TopAppBarDefaults.topAppBarColors(
+//                    containerColor = Color.White
+//                ),
+//                navigationIcon = {
+//                    IconButton(onClick = {
+//                        activity.finish()
+//                    }) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.outline_dehaze_24),
+//                            contentDescription = null
+//                        )
+//                    }
+//                },
+//                actions = {
+//                    IconButton(onClick = { }) {
+//                        Icon(
+//                            painter = painterResource(R.drawable.baseline_visibility_24),
+//                            contentDescription = null
+//                        )
+//                    }
+//                }
+//            )
+//        }
+//    )
+}
 
-
-
-
-@Preview
+    @Preview
 @Composable
-fun Homepreview() {
-Home()
+fun Dashboardpreview() {
+Dashboard()
     }

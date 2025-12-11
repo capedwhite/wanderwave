@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "118653074066",
+    "firebase_url": "https://wanderwave-9d189-default-rtdb.firebaseio.com",
+    "project_id": "wanderwave-9d189",
+    "storage_bucket": "wanderwave-9d189.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118653074066:android:f033bccbade54b1bb8c44b",
+        "android_client_info": {
+          "package_name": "com.example.wanderwave"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD_PKuURwj5-zh8zf39hWBoLGXkB_smMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
