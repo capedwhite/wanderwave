@@ -1,4 +1,4 @@
-package com.example.wanderwave
+package com.example.wanderwave.view
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -10,7 +10,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,17 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -47,11 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -67,10 +58,13 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
+import com.example.wanderwave.R
+import com.example.wanderwave.model.UserModel
+import com.example.wanderwave.repository.UserRepoImpl
 import com.example.wanderwave.ui.theme.Darkgreen
 import com.example.wanderwave.ui.theme.Lightgreen
 import com.example.wanderwave.ui.theme.turcoise
+import com.example.wanderwave.viewmodel.UserViewModel
 import java.util.Calendar
 
 class RegisterActivity : ComponentActivity() {
@@ -85,7 +79,9 @@ class RegisterActivity : ComponentActivity() {
 
 @Composable
 fun registration() {
+    val userViewModel = remember { UserViewModel(UserRepoImpl()) }
     var email by remember { mutableStateOf("") }
+    var username by remember {mutableStateOf("")}
     var password by remember { mutableStateOf("") }
     var Reenter by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
@@ -108,7 +104,7 @@ fun registration() {
     getSharedPreferences("User",
         Context.MODE_PRIVATE)
     val savedEmail = sharedPreference.getString("email","")
-    val editor = sharedPreference.edit()
+//    val editor = sharedPreference.edit()
     Scaffold { padding ->
         Box(Modifier.fillMaxSize()) {
             Image(
@@ -154,6 +150,37 @@ fun registration() {
                     modifier= Modifier.fillMaxWidth()
                 )
                 Spacer(modifier=Modifier.height(20.dp))
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { data ->
+                        username=data
+                    },
+                    label={Text("Username")},
+                    shape=RoundedCornerShape(15.dp),
+                    placeholder = {
+                        Text(
+                            "enter username", style = TextStyle(
+                                color = Color.LightGray
+                            )
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 15.dp),
+
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Lightgreen.copy(alpha = 0.4f),
+                        unfocusedContainerColor = Color.White,
+                        focusedIndicatorColor = turcoise,
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+
+
+                )
+                Spacer(modifier=Modifier.height(10.dp))
                 OutlinedTextField(
                     value = email,
                     onValueChange = { data ->
@@ -354,23 +381,54 @@ trailingIcon = {
                                 Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        if(savedEmail?.trim()==email.trim()){
-                            Toast.makeText(context,"Email already in use",Toast.LENGTH_SHORT).show()
-                            return@Button
-                        }
+//                        if(savedEmail?.trim()==email.trim()){
+//                            Toast.makeText(context,"Email already in use",Toast.LENGTH_SHORT).show()
+//                            return@Button
+//                        }
 if(password!=Reenter){
     Toast.makeText(context,"MisMatch in retyped password",Toast.LENGTH_SHORT).show()
     return@Button
 }
                         else{
-                            editor.putString("email",email)
-                            editor.putString("password",password)
-                            editor.putString("date",selectedDate)
-                            editor.apply()
-                            Toast.makeText(context,
-                                "Registration success",
-                                Toast.LENGTH_SHORT).show()
-                        activity.finish()
+                            userViewModel.register(
+                                email,password
+                            ){
+                                success,msg,userID->
+                                if(success){
+                                    val model = UserModel(
+                                        userId=userID,
+                                        username=username,
+                                        email=email,
+                                        password=password,
+                                        dob=selectedDate
+                                    )
+                                    userViewModel.addUserToDatabase(userID,model){
+                                        success,msg->
+                                            if(success){
+                                                Toast.makeText(context,msg, Toast.LENGTH_SHORT).show()
+                                                val intent = Intent(
+                                                    context, LoginActivity::class.java
+                                                )
+                                                context.startActivity(intent)
+                                                activity.finish()
+                                            }
+                                        else{
+                                            Toast.makeText(context,msg,Toast.LENGTH_SHORT).show()
+                                            }
+
+
+                                    }
+                                }
+                                else{
+                                    Toast.makeText(context,msg,Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+//                            editor.putString("email",email)
+//                            editor.putString("password",password)
+//                            editor.putString("date",selectedDate)
+//                            editor.apply()
+//                            Toast.makeText(context,
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -394,7 +452,7 @@ if(password!=Reenter){
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     buildAnnotatedString {
-                        withStyle(SpanStyle(color = Darkgreen)) {
+                        withStyle(SpanStyle(color = Color.White)) {
                             append("Already have an have account?")
                         }
 
@@ -411,7 +469,7 @@ if(password!=Reenter){
                                 context, LoginActivity::class.java
                             )
                             context.startActivity(intent)
-                            activity.finish()
+
                         }
                 )
                     }
@@ -419,7 +477,6 @@ if(password!=Reenter){
             }
 
         }
-
 
 @Preview
 @Composable

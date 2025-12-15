@@ -5,23 +5,26 @@ import javax.security.auth.callback.Callback
 
 interface ProductRepo {
     fun addProduct(
-        productId: String,
-        model: ProductModel,
-        callback: (Boolean, String)-> Unit
+        product: ProductModel,
+        callback: (Boolean, String) -> Unit
     )
-    fun updateProduct(
-        productId:String,
-        model: ProductModel,
-        callback:(Boolean,String)->Unit
-    )
-    fun getProduct(
-        productId: String,
-        callback: (Boolean, String, ProductModel) -> Unit
 
-    )
-    fun getAllProducts(
+    fun getAllProducts(callback: (Boolean, String, List<ProductModel>?) -> Unit)
+
+    fun getProductById(
         productId: String,
-        callback:(Boolean,String,List<ProductModel>)->Unit
+        callback: (Boolean, String, ProductModel?) -> Unit
+    )
+
+    fun updateProduct(
+        productId: String,
+        product: ProductModel,
+        callback: (Boolean, String) -> Unit
+    )
+
+    fun deleteProduct(
+        productId: String,
+        callback: (Boolean, String) -> Unit
     )
 
 }

@@ -2,7 +2,7 @@ package com.example.wanderwave.model
 
 data class ProductModel(
     val ProductName:String="",
-    val ProductId:String="",
+    var ProductId:String="",
     val ProductDescription:String="",
     val ProductPrice:String="")
 {

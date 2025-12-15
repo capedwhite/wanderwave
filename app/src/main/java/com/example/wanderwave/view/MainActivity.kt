@@ -1,4 +1,4 @@
-package com.example.wanderwave
+package com.example.wanderwave.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -12,12 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WanderWave">
         <activity
-            android:name=".ForgetpasswordActivity"
+            android:name=".view.AddproductActivity"
+            android:exported="false"
+            android:label="@string/title_activity_addproduct"
+            android:theme="@style/Theme.WanderWave" />
+        <activity
+            android:name=".view.ForgetpasswordActivity"
             android:exported="false"
             android:label="@string/title_activity_forgetpassword"
             android:theme="@style/Theme.WanderWave" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".view.SplashActivity"
             android:exported="true"
             android:label="@string/title_activity_splash"
             android:theme="@style/Theme.WanderWave">
@@ -28,25 +33,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".view.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.WanderWave"></activity>
+            android:theme="@style/Theme.WanderWave" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".view.RegisterActivity"
             android:exported="true"
             android:label="@string/title_activity_register"
-            android:theme="@style/Theme.WanderWave"></activity>
+            android:theme="@style/Theme.WanderWave" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".view.DashboardActivity"
             android:exported="true"
             android:label="@string/title_activity_home"
-            android:theme="@style/Theme.WanderWave"></activity>
+            android:theme="@style/Theme.WanderWave" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.WanderWave"></activity>
+            android:theme="@style/Theme.WanderWave" />
     </application>
 
 </manifest>

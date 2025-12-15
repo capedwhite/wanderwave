@@ -36,7 +36,7 @@ class UserRepoImpl : UserRepo {
     ) {
         auth.createUserWithEmailAndPassword(email,password).addOnCompleteListener {
             if(it.isSuccessful){
-                callback(true,"Registration sucess","${auth.currentUser?.uid}")
+                callback(true,"Registration success","${auth.currentUser?.uid}")
             }
             else{
                 callback(false,"${it.exception?.message}","")
