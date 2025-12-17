@@ -310,7 +310,7 @@ Image(
                                         Toast.makeText(
                                             context,msg,Toast.LENGTH_SHORT).show()
                                         val intent = Intent(
-                                            context, AddproductActivity::class.java
+                                            context, DashboardActivity::class.java
                                         )
                                         context.startActivity(intent)
                                         activity.finish()

@@ -88,8 +88,16 @@ Text(
         Box(modifier= Modifier
             .padding(20.dp)
             .height(500.dp)
-            .background(Color.White)){
-            Column {
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color.White)
+           ){
+            Column(
+                modifier=Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center
+               )
+             {
+
+
             OutlinedTextField(
                 value = productName,
                 onValueChange = { data ->

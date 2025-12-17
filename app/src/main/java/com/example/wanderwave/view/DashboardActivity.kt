@@ -1,6 +1,7 @@
 package com.example.wanderwave.view
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,8 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -60,8 +64,8 @@ fun Dashboard() {
         val icon: Int
     )
 
-//    val context = LocalContext.current
-//    val activity = context as? Activity
+    val context = LocalContext.current
+    val activity = context as? Activity
     var selectedIndex by remember { mutableStateOf(0) }
 
     val navlist = listOf(
@@ -72,10 +76,31 @@ fun Dashboard() {
     )
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    val intent = Intent(
+                        context, AddproductActivity::class.java,
+                    )
+                    context.startActivity(intent)
+                },
+                containerColor = turcoise
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+        },
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                        Text("Vaccation Package", color = turcoise, style=TextStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp))
+                    Text(
+                        "Vaccation Package",
+                        color = turcoise,
+                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 25.sp)
+                    )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.White
@@ -101,7 +126,7 @@ fun Dashboard() {
             )
         },
         bottomBar = {
-            NavigationBar(containerColor=turcoise) {
+            NavigationBar(containerColor = turcoise) {
                 navlist.forEachIndexed { index, item ->
                     NavigationBarItem(
 
@@ -113,7 +138,7 @@ fun Dashboard() {
                             )
                         },
                         label = {
-                            Text(item.label,color=Color.White)
+                            Text(item.label, color = Color.White)
 
                         },
 
@@ -122,19 +147,27 @@ fun Dashboard() {
                             selectedIndex = index
                         },
 
-                    )
+                        )
                 }
             }
         }
-    ) {padding ->
+    ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-        )
+        ) {
+            when (selectedIndex) {
+                0 -> HomeScreen()
+                1 -> ""
+                2 -> ""
+                3 -> ""
+                else -> HomeScreen()
+            }
+
+        }
     }
 }
-
 
     @Preview
 @Composable
