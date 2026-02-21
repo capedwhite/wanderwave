@@ -1,15 +1,19 @@
 package com.example.wanderwave.repository
 
+import android.content.Context
+import android.net.Uri
 import com.example.wanderwave.model.ProductModel
-import javax.security.auth.callback.Callback
 
 interface ProductRepo {
+
     fun addProduct(
         product: ProductModel,
         callback: (Boolean, String) -> Unit
     )
 
-    fun getAllProducts(callback: (Boolean, String, List<ProductModel>?) -> Unit)
+    fun getAllProducts(
+        callback: (Boolean, String, List<ProductModel>?) -> Unit
+    )
 
     fun getProductById(
         productId: String,
@@ -17,7 +21,6 @@ interface ProductRepo {
     )
 
     fun updateProduct(
-        productId: String,
         product: ProductModel,
         callback: (Boolean, String) -> Unit
     )
@@ -26,5 +29,14 @@ interface ProductRepo {
         productId: String,
         callback: (Boolean, String) -> Unit
     )
+    fun uploadImage(
+        context: Context,
+        imageUri: Uri,
+        callback: (String?) -> Unit
 
+        )
+    fun getFileNameFromUri(
+        context: Context,
+        imageUri: Uri
+    ):String?
 }

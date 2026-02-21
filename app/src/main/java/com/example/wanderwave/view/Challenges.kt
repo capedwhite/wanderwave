@@ -12,7 +12,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,21 +29,18 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import com.example.wanderwave.R
-import com.example.wanderwave.model.ProductModel
-import com.example.wanderwave.repository.ProductRepoImpl
-import com.example.wanderwave.viewmodel.ProductViewModel
+import com.example.wanderwave.model.ChallenegesModel
+import com.example.wanderwave.repository.ChallengeRepoImpl
+import com.example.wanderwave.viewmodel.ChallengeViewModel
 
-// ── Palette ────────────────────────────────────────────────────────────────────
+// ── Palette (same as HomeScreen) ──────────────────────────────────────────────
 private val Turcoise      = Color(0xFF638C80)
 private val TurcoiseDeep  = Color(0xFF3D6457)
 private val TurcoiseLight = Color(0xFFE8F2EE)
@@ -57,34 +53,23 @@ private val CardBg        = Color(0xFFFFFFFF)
 private val ChipBg        = Color(0xFFDCEDE7)
 
 @Composable
-fun HomeScreen() {
+fun ChallengeScreen() {
+    var challengetitle  by remember { mutableStateOf("") }
+    var challengedetail by remember { mutableStateOf("") }
+    var challengetime   by remember { mutableStateOf("") }
+    var showDialog      by remember { mutableStateOf(false) }
+    val challengeviewmodel = remember { ChallengeViewModel(ChallengeRepoImpl()) }
+    val selectedchallenge by challengeviewmodel.selectedChallenge.observeAsState(null)
+    val allChallenges     by challengeviewmodel.allChallenges.observeAsState(initial = emptyList())
     val context = LocalContext.current
-    val productViewModel = remember { ProductViewModel(ProductRepoImpl()) }
-    val allProducts by productViewModel.allProducts.observeAsState(emptyList())
-    val selectedProduct by productViewModel.selectedProduct.observeAsState()
 
-    var searchItem by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var productName by remember { mutableStateOf("") }
-    var productDescription by remember { mutableStateOf("") }
-    var productPrice by remember { mutableStateOf("") }
-    var productTime by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) { challengeviewmodel.getAllChallenges() }
 
-    LaunchedEffect(Unit) { productViewModel.getAllProducts() }
-    LaunchedEffect(selectedProduct) {
-        selectedProduct?.let {
-            productName = it.productName
-            productDescription = it.productDescription
-            productPrice = it.productPrice
-            productTime = it.productTime
-        }
-    }
-
-    val filtered = remember(searchItem, allProducts) {
-        if (searchItem.isBlank()) allProducts
-        else allProducts.filter {
-            it.productName.contains(searchItem, ignoreCase = true) ||
-                    it.productDescription.contains(searchItem, ignoreCase = true)
+    LaunchedEffect(selectedchallenge) {
+        selectedchallenge?.let {
+            challengetitle  = it.title
+            challengedetail = it.description
+            challengetime   = it.time
         }
     }
 
@@ -100,81 +85,52 @@ fun HomeScreen() {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(
-                            Brush.verticalGradient(listOf(TurcoiseDeep, Turcoise))
-                        )
+                        .background(Brush.verticalGradient(listOf(TurcoiseDeep, Turcoise)))
                         .padding(horizontal = 24.dp)
                         .padding(top = 52.dp, bottom = 32.dp)
                 ) {
                     // Decorative circles
                     Box(
                         Modifier
-                            .size(150.dp)
+                            .size(160.dp)
                             .align(Alignment.TopEnd)
-                            .offset(x = 40.dp, y = (-20).dp)
+                            .offset(x = 50.dp, y = (-30).dp)
                             .background(Color.White.copy(alpha = 0.07f), CircleShape)
                     )
                     Box(
                         Modifier
-                            .size(80.dp)
+                            .size(90.dp)
                             .align(Alignment.TopEnd)
-                            .offset(x = (-10).dp, y = 10.dp)
-                            .background(Color.White.copy(alpha = 0.07f), CircleShape)
+                            .offset(x = (-20).dp, y = 20.dp)
+                            .background(Color.White.copy(alpha = 0.06f), CircleShape)
                     )
 
                     Column {
                         Text(
-                            "Explore",
+                            "WANDER",
                             color = TurcoiseGlow,
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = 3.sp
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
-                            "Vacation\nPackages",
+                            "Challenges",
                             color = Color.White,
                             fontSize = 34.sp,
-                            fontWeight = FontWeight.Bold,
-                            lineHeight = 40.sp
+                            fontWeight = FontWeight.Bold
                         )
-                        Spacer(Modifier.height(20.dp))
-
-                        // Search bar
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.White.copy(alpha = 0.15f))
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Outlined.Search,
-                                contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.7f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(Modifier.width(10.dp))
-                            androidx.compose.foundation.text.BasicTextField(
-                                value = searchItem,
-                                onValueChange = { searchItem = it },
-                                singleLine = true,
-                                textStyle = TextStyle(color = Color.White, fontSize = 15.sp),
-                                modifier = Modifier.weight(1f),
-                                decorationBox = { inner ->
-                                    if (searchItem.isEmpty()) {
-                                        Text("Search destinations...", color = Color.White.copy(alpha = 0.5f), fontSize = 15.sp)
-                                    }
-                                    inner()
-                                }
-                            )
-                        }
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            "Push your limits, explore more",
+                            color = Color.White.copy(alpha = 0.65f),
+                            fontSize = 14.sp
+                        )
                     }
                 }
             }
 
-            // ── Stats strip ──────────────────────────────────────────────────
+            // ── Count strip ──────────────────────────────────────────────────
             item {
                 Row(
                     modifier = Modifier
@@ -184,7 +140,7 @@ fun HomeScreen() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (searchItem.isBlank()) "${filtered.size} Packages" else "${filtered.size} Results",
+                        "${allChallenges.size} Active Challenges",
                         color = TextDark,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold
@@ -195,18 +151,18 @@ fun HomeScreen() {
                             .background(ChipBg)
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
-                        Text("All trips", color = Turcoise, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        Text("All", color = Turcoise, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                     }
                 }
             }
 
-            // ── Cards ────────────────────────────────────────────────────────
-            itemsIndexed(filtered) { _, data ->
-                ProductCard(
+            // ── Challenge cards ──────────────────────────────────────────────
+            itemsIndexed(allChallenges) { _, data ->
+                ChallengeCard(
                     data = data,
-                    productViewModel = productViewModel,
+                    challengeViewModel = challengeviewmodel,
                     onEditClick = {
-                        productViewModel.getProductById(data.productId)
+                        challengeviewmodel.getChallengeById(data.challengeId)
                         showDialog = true
                     }
                 )
@@ -216,7 +172,7 @@ fun HomeScreen() {
 
         // ── FAB ───────────────────────────────────────────────────────────────
         FloatingActionButton(
-            onClick = { context.startActivity(Intent(context, AddproductActivity::class.java)) },
+            onClick = { context.startActivity(Intent(context, AddChallenges::class.java)) },
             modifier = Modifier.align(Alignment.BottomEnd).padding(24.dp),
             containerColor = TurcoiseDeep,
             contentColor = Color.White,
@@ -233,7 +189,7 @@ fun HomeScreen() {
         }
 
         // ── Edit dialog ───────────────────────────────────────────────────────
-        if (showDialog && selectedProduct != null) {
+        if (showDialog && selectedchallenge != null) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 shape = RoundedCornerShape(24.dp),
@@ -246,33 +202,41 @@ fun HomeScreen() {
                                 .background(TurcoiseLight, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Edit, contentDescription = null, tint = Turcoise, modifier = Modifier.size(18.dp))
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = null,
+                                tint = Turcoise,
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                         Spacer(Modifier.width(10.dp))
-                        Text("Update Package", fontWeight = FontWeight.Bold, color = TextDark, fontSize = 18.sp)
+                        Text(
+                            "Update Challenge",
+                            fontWeight = FontWeight.Bold,
+                            color = TextDark,
+                            fontSize = 18.sp
+                        )
                     }
                 },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        DialogField("Package Name", productName, Icons.Outlined.CardTravel) { productName = it }
-                        DialogField("Description", productDescription, Icons.Outlined.Description) { productDescription = it }
-                        DialogField("Price", productPrice, Icons.Outlined.AttachMoney) { productPrice = it }
-                        DialogField("Duration", productTime, Icons.Outlined.Schedule) { productTime = it }
+                        ChallengeDialogField("Challenge Name", challengetitle, Icons.Outlined.EmojiEvents) { challengetitle = it }
+                        ChallengeDialogField("Description", challengedetail, Icons.Outlined.Description) { challengedetail = it }
+                        ChallengeDialogField("Duration / Time", challengetime, Icons.Outlined.Schedule) { challengetime = it }
                     }
                 },
                 confirmButton = {
                     Button(
                         onClick = {
-                            val updated = ProductModel(
-                                productId = selectedProduct!!.productId,
-                                productName = productName,
-                                productDescription = productDescription,
-                                productPrice = productPrice,
-                                productTime = productTime
+                            val updated = ChallenegesModel(
+                                challengeId = selectedchallenge!!.challengeId,
+                                title       = challengetitle,
+                                description = challengedetail,
+                                time        = challengetime
                             )
-                            productViewModel.updateProduct(updated) { success, _ ->
+                            challengeviewmodel.updateChallenge(updated) { success, _ ->
                                 if (success) {
-                                    productViewModel.getAllProducts()
+                                    challengeviewmodel.getAllChallenges()
                                     showDialog = false
                                 }
                             }
@@ -292,9 +256,9 @@ fun HomeScreen() {
 }
 
 @Composable
-fun ProductCard(
-    data: ProductModel,
-    productViewModel: ProductViewModel,
+fun ChallengeCard(
+    data: ChallenegesModel,
+    challengeViewModel: ChallengeViewModel,
     onEditClick: () -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -315,90 +279,61 @@ fun ProductCard(
         elevation = CardDefaults.cardElevation(0.dp)
     ) {
         Column {
-            // ── Image ──────────────────────────────────────────────────────
+
+            // ── Coloured accent bar at top ─────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp)
-            ) {
-                if (data.productImage.isNotBlank()) {
-                    AsyncImage(
-                        model = data.productImage,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                            .background(Brush.linearGradient(listOf(TurcoiseDeep, Turcoise, TurcoiseGlow))),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            Icons.Outlined.Landscape,
-                            contentDescription = null,
-                            tint = Color.White.copy(alpha = 0.4f),
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
-                }
+                    .height(6.dp)
+                    .background(Brush.horizontalGradient(listOf(TurcoiseDeep, Turcoise, TurcoiseGlow)))
+            )
 
-                // Price badge
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(12.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(TurcoiseDeep.copy(alpha = 0.92f))
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        "$ ${data.productPrice}",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                }
+            Column(modifier = Modifier.padding(18.dp)) {
 
-                // Duration badge
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(12.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Black.copy(alpha = 0.45f))
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Outlined.Schedule,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(13.dp)
-                        )
-                        Spacer(Modifier.width(4.dp))
-                        Text(data.productTime, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Medium)
-                    }
-                }
-            }
-
-            // ── Body ───────────────────────────────────────────────────────
-            Column(modifier = Modifier.padding(16.dp)) {
+                // ── Title row ──────────────────────────────────────────────
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        data.productName,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = TextDark,
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    // Icon badge
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .background(TurcoiseLight, RoundedCornerShape(14.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Outlined.EmojiEvents,
+                            contentDescription = null,
+                            tint = Turcoise,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+                    Spacer(Modifier.width(12.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            data.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = TextDark,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Spacer(Modifier.height(2.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                Icons.Outlined.Schedule,
+                                contentDescription = null,
+                                tint = TextSoft,
+                                modifier = Modifier.size(13.dp)
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(data.time, color = TextSoft, fontSize = 12.sp)
+                        }
+                    }
+
                     // Expand chevron
                     IconButton(
                         onClick = { expanded = !expanded },
@@ -409,55 +344,62 @@ fun ProductCard(
                     ) {
                         Icon(
                             Icons.Outlined.KeyboardArrowDown,
-                            contentDescription = if (expanded) "Collapse" else "Expand",
+                            contentDescription = null,
                             tint = Turcoise,
                             modifier = Modifier.rotate(chevronRotation)
                         )
                     }
                 }
 
-                // Short description preview always visible
+                // Description preview
+                Spacer(Modifier.height(10.dp))
                 Text(
-                    data.productDescription,
+                    data.description,
                     color = TextSoft,
                     fontSize = 13.sp,
                     maxLines = if (expanded) Int.MAX_VALUE else 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 4.dp)
+                    overflow = TextOverflow.Ellipsis
                 )
 
-                // ── Expanded content ───────────────────────────────────────
+                // ── Expanded section ───────────────────────────────────────
                 AnimatedVisibility(
                     visible = expanded,
                     enter = fadeIn() + expandVertically(),
                     exit = fadeOut() + shrinkVertically()
                 ) {
                     Column {
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(14.dp))
                         HorizontalDivider(color = TurcoiseLight, thickness = 1.dp)
-                        Spacer(Modifier.height(12.dp))
-
-                        // Info chips
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            InfoChip(Icons.Outlined.AttachMoney, "$ ${data.productPrice}")
-                            InfoChip(Icons.Outlined.Schedule, data.productTime)
-                        }
-
-                        Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(14.dp))
 
                         Text(
-                            "About this trip",
+                            "About this challenge",
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                             color = TextDark
                         )
-                        Spacer(Modifier.height(4.dp))
+                        Spacer(Modifier.height(6.dp))
                         Text(
-                            data.productDescription,
+                            data.description,
                             color = TextMid,
                             fontSize = 14.sp,
                             lineHeight = 22.sp
                         )
+
+                        Spacer(Modifier.height(6.dp))
+
+                        // Time chip
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(TurcoiseLight)
+                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        ) {
+                            Icon(Icons.Outlined.Schedule, contentDescription = null, tint = Turcoise, modifier = Modifier.size(14.dp))
+                            Text(data.time, color = TurcoiseDeep, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+                        }
 
                         Spacer(Modifier.height(16.dp))
 
@@ -479,8 +421,8 @@ fun ProductCard(
 
                             Button(
                                 onClick = {
-                                    productViewModel.deleteProduct(data.productId) { success, _ ->
-                                        if (success) productViewModel.getAllProducts()
+                                    challengeViewModel.deleteChallenge(data.challengeId) { success, _ ->
+                                        if (success) challengeViewModel.getAllChallenges()
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
@@ -500,32 +442,19 @@ fun ProductCard(
 }
 
 @Composable
-fun InfoChip(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String) {
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(TurcoiseLight)
-            .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Icon(icon, contentDescription = null, tint = Turcoise, modifier = Modifier.size(14.dp))
-        Text(text, color = TurcoiseDeep, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-@Composable
-fun DialogField(
+fun ChallengeDialogField(
     label: String,
     value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     onChange: (String) -> Unit
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
         label = { Text(label, fontSize = 13.sp) },
-        leadingIcon = { Icon(icon, contentDescription = null, tint = Turcoise, modifier = Modifier.size(18.dp)) },
+        leadingIcon = {
+            Icon(icon, contentDescription = null, tint = Turcoise, modifier = Modifier.size(18.dp))
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(

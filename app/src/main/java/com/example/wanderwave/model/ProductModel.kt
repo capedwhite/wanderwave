@@ -1,19 +1,22 @@
 package com.example.wanderwave.model
 
 data class ProductModel(
-    val ProductName:String="",
-    var ProductId:String="",
-    val ProductDescription:String="",
-    val ProductPrice:String="")
-{
-    fun toMap(): Map<String , Any?>{
+    var productId: String = "",
+    var productName: String = "",
+    var productDescription: String = "",
+    var productPrice: String = "",
+    var productTime: String = "",
+    var productImage:String=""
+) {
+    fun toMap(): Map<String, Any?> {
         return mapOf(
-            "ProductName" to ProductName,
-            "ProductId" to ProductId,
-            "ProductDescription" to ProductDescription,
-            "ProductPrice" to ProductPrice
+            "productId" to productId,
+            "productName" to productName,
+            "productDescription" to productDescription,
+            "productPrice" to productPrice,
+            "productTime" to productTime,
+            "productImage" to productImage
         )
     }
-
 }
 

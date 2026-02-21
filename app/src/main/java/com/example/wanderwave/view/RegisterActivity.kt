@@ -424,11 +424,7 @@ if(password!=Reenter){
                                 }
 
                             }
-//                            editor.putString("email",email)
-//                            editor.putString("password",password)
-//                            editor.putString("date",selectedDate)
-//                            editor.apply()
-//                            Toast.makeText(context,
+
                         }
                     },
                     colors = ButtonDefaults.buttonColors(

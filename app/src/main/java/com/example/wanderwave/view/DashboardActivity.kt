@@ -76,23 +76,7 @@ fun Dashboard() {
     )
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    val intent = Intent(
-                        context, AddproductActivity::class.java,
-                    )
-                    context.startActivity(intent)
-                },
-                containerColor = turcoise
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-        },
+
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -160,8 +144,8 @@ fun Dashboard() {
             when (selectedIndex) {
                 0 -> HomeScreen()
                 1 -> ""
-                2 -> ""
-                3 -> ""
+                2 -> ChallengeScreen()
+                3 -> AboutVacationScreen()
                 else -> HomeScreen()
             }
 

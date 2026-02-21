@@ -35,6 +35,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.wandericon),
